@@ -18,6 +18,8 @@
 
 	<properties>
 		<java.version>19</java.version>
+		<guava.version>31.1-jre</guava.version>
+		<snakeyaml.version>1.33</snakeyaml.version>
 	</properties>
 
 	<dependencies>
@@ -37,6 +39,12 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
 		</dependency>
 
 		<dependency>
