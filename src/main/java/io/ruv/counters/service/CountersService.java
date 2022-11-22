@@ -49,6 +49,7 @@ public interface CountersService {
      * @return deleted counter
      * @throws NotFoundException when counter with specified name does not exist
      */
+    @NonNull
     CounterDto deleteByName(@NonNull String name) throws NotFoundException;
 
     /**

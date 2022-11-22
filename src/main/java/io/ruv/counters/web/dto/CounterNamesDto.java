@@ -2,6 +2,7 @@ package io.ruv.counters.web.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class CounterNamesDto {
     /**
      * Counter names list
      */
+    @NonNull
     private List<String> names;
 
 

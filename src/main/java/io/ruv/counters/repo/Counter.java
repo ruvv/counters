@@ -1,11 +1,14 @@
 package io.ruv.counters.repo;
 
+import org.springframework.lang.NonNull;
+
 /**
  * Counter abstraction allowing for different {@link CountersRepository} implementations
  * Contains optional locking release handle for pseudo-atomic access support
  */
 public interface Counter {
 
+    @NonNull
     String getName();
 
     long getValue();

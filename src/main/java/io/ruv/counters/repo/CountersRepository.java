@@ -1,5 +1,7 @@
 package io.ruv.counters.repo;
 
+import org.springframework.lang.NonNull;
+
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -16,7 +18,8 @@ public interface CountersRepository {
      * @return {@link Optional} containing target counter
      * or empty {@link Optional} if counter with specified name does not exist
      */
-    Optional<Counter> findByName(String name);
+    @NonNull
+    Optional<Counter> findByName(@NonNull String name);
 
     /**
      * Retrieves stream containing all counters present at the start of operation
@@ -24,6 +27,7 @@ public interface CountersRepository {
      *
      * @return {@link Stream} containing counters present at the start of operation
      */
+    @NonNull
     Stream<Counter> findAll();
 
     /**
@@ -34,7 +38,8 @@ public interface CountersRepository {
      * @return {@link Optional} containing created counter
      * or empty {@link Optional} if counter with specified name already exists
      */
-    Optional<Counter> create(String name, long value);
+    @NonNull
+    Optional<Counter> create(@NonNull String name, long value);
 
     /**
      * Increments value of counter with specified name if it exists
@@ -43,7 +48,8 @@ public interface CountersRepository {
      * @return {@link Optional} containing updated counter
      * or empty {@link Optional} if counter with specified name does not exist
      */
-    Optional<Counter> increment(String name);
+    @NonNull
+    Optional<Counter> increment(@NonNull String name);
 
     /**
      * Removes and returns counter with specified name if it exists
@@ -52,6 +58,7 @@ public interface CountersRepository {
      * @return {@link Optional} containing removed counter
      * or empty {@link Optional} if counter with specified name does not exist
      */
-    Optional<Counter> delete(String name);
+    @NonNull
+    Optional<Counter> delete(@NonNull String name);
 
 }
