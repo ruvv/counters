@@ -24,6 +24,8 @@ public interface CountersRepository {
     /**
      * Retrieves stream containing all counters present at the start of operation
      * If there are no counters present - returns empty stream
+     * Depending on implementation counter values may be modified between start of this operation and moment
+     * when resulting stream is consumed
      *
      * @return {@link Stream} containing counters present at the start of operation
      */
@@ -33,13 +35,13 @@ public interface CountersRepository {
     /**
      * Creates new counter with specified name and initial value if no counter with same name already exists
      *
-     * @param name new counter name
+     * @param name  new counter name
      * @param value new counter value
      * @return {@link Optional} containing created counter
      * or empty {@link Optional} if counter with specified name already exists
      */
     @NonNull
-    Optional<Counter> create(@NonNull String name, long value);
+    Optional<Counter> create(@NonNull String name, @NonNull long value);
 
     /**
      * Increments value of counter with specified name if it exists
@@ -47,9 +49,10 @@ public interface CountersRepository {
      * @param name target counter name
      * @return {@link Optional} containing updated counter
      * or empty {@link Optional} if counter with specified name does not exist
+     * @throws ArithmeticException when incrementing counter value will result in overflow
      */
     @NonNull
-    Optional<Counter> increment(@NonNull String name);
+    Optional<Counter> increment(@NonNull String name) throws ArithmeticException;
 
     /**
      * Removes and returns counter with specified name if it exists

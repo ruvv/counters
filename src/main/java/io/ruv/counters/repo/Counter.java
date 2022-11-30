@@ -11,6 +11,7 @@ public interface Counter {
     @NonNull
     String getName();
 
+    @NonNull
     long getValue();
 
     /**
