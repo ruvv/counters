@@ -11,6 +11,13 @@ public class DuplicateNameException extends RuntimeException implements ApiExcep
         super(message);
     }
 
+    @NonNull
+    @Override
+    public String getMessage() {
+
+        return super.getMessage();
+    }
+
     @Override
     @NonNull
     public HttpStatus getHttpStatus() {

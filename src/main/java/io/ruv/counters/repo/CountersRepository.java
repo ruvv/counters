@@ -52,7 +52,7 @@ public interface CountersRepository {
      * @throws ArithmeticException when incrementing counter value will result in overflow
      */
     @NonNull
-    Optional<Counter> increment(@NonNull String name) throws ArithmeticException;
+    Optional<Counter> incrementByName(@NonNull String name) throws ArithmeticException;
 
     /**
      * Removes and returns counter with specified name if it exists
@@ -62,6 +62,6 @@ public interface CountersRepository {
      * or empty {@link Optional} if counter with specified name does not exist
      */
     @NonNull
-    Optional<Counter> delete(@NonNull String name);
+    Optional<Counter> deleteByName(@NonNull String name);
 
 }

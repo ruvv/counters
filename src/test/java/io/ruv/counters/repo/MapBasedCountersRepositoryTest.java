@@ -156,7 +156,7 @@ public interface MapBasedCountersRepositoryTest<T> {
         storage.put(name, value);
 
         //act
-        val maybeCounter = repo.increment(name);
+        val maybeCounter = repo.incrementByName(name);
 
         Assertions.assertThat(storage).hasSize(1);
         Assertions.assertThat(storage.get(name)).extracting(this::valueExtractor).isEqualTo(expectedValue);
@@ -176,7 +176,7 @@ public interface MapBasedCountersRepositoryTest<T> {
         val name = oneName();
 
         //act
-        val maybeCounter = repo.increment(name);
+        val maybeCounter = repo.incrementByName(name);
 
         Assertions.assertThat(maybeCounter).isEmpty();
     }
@@ -193,7 +193,7 @@ public interface MapBasedCountersRepositoryTest<T> {
         storage.put(name, value);
 
         //act
-        Assertions.assertThatThrownBy(() -> repo.increment(name))
+        Assertions.assertThatThrownBy(() -> repo.incrementByName(name))
                 .isInstanceOf(ArithmeticException.class);
     }
 
@@ -209,7 +209,7 @@ public interface MapBasedCountersRepositoryTest<T> {
         storage.put(name, value);
 
         //act
-        val maybeCounter = repo.delete(name);
+        val maybeCounter = repo.deleteByName(name);
 
         Assertions.assertThat(storage).isEmpty();
 
@@ -228,7 +228,7 @@ public interface MapBasedCountersRepositoryTest<T> {
         val name = oneName();
 
         //act
-        val maybeCounter = repo.delete(name);
+        val maybeCounter = repo.deleteByName(name);
 
         Assertions.assertThat(maybeCounter).isEmpty();
     }

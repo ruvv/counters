@@ -11,6 +11,12 @@ public class IllegalNameException extends RuntimeException implements ApiExcepti
         super(message);
     }
 
+    @NonNull
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
+
     @Override
     @NonNull
     public HttpStatus getHttpStatus() {

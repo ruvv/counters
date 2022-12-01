@@ -104,7 +104,7 @@ public class StripedLongCountersRepository implements CountersRepository {
      */
     @Override
     @NonNull
-    public Optional<Counter> increment(@NonNull String name) {
+    public Optional<Counter> incrementByName(@NonNull String name) {
 
         return global.reading(() -> {
 
@@ -137,7 +137,7 @@ public class StripedLongCountersRepository implements CountersRepository {
      */
     @Override
     @NonNull
-    public Optional<Counter> delete(@NonNull String name) {
+    public Optional<Counter> deleteByName(@NonNull String name) {
         return global.reading(() -> {
 
             val lock = locks.get(name).writeLock();

@@ -6,9 +6,16 @@ import org.springframework.lang.NonNull;
 
 public class OverflowException extends RuntimeException implements ApiException {
 
-    public OverflowException(String message) {
+    public OverflowException(String message, Throwable cause) {
 
-        super(message);
+        super(message, cause);
+    }
+
+    @NonNull
+    @Override
+    public String getMessage() {
+
+        return super.getMessage();
     }
 
     @Override

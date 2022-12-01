@@ -11,6 +11,12 @@ public class NotFoundException extends RuntimeException implements ApiException 
         super(message);
     }
 
+    @NonNull
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
+
     @Override
     @NonNull
     public HttpStatus getHttpStatus() {
