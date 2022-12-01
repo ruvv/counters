@@ -5,6 +5,7 @@ import io.ruv.counters.web.dto.CounterDto;
 import io.ruv.counters.web.dto.CounterNamesDto;
 import io.ruv.counters.web.dto.CounterSumDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class CountersController {
     private final CountersService service;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CounterDto create(@RequestBody CounterDto dto) {
 
         if (dto.getName() == null) {
@@ -28,6 +30,7 @@ public class CountersController {
     }
 
     @PutMapping("/{name}")
+    @ResponseStatus(HttpStatus.CREATED)
     public CounterDto insert(@PathVariable String name, @RequestBody CounterDto dto) {
 
         dto.setName(name);

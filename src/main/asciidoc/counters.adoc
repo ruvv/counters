@@ -1,0 +1,70 @@
+== Counters
+Small application about counters controlled via REST api.
+
+=== General
+This application tries to follow the REST guidelines.
+Counters are considered resources identified by their names (`/api/v1/counters/counter-name`)
+and residing in counters collection at `/api/v1/counters`.
+Additional operations are available on `/api/v1/counters/extension/*` endpoints.
+
+=== Status codes
+Possible return status codes are
+
+* 200 OK - successful request
+* 201 Created - successful request resulting in new resource creation
+* 400 Bad Request - unsuccessful request - malformed request, illegal counter name
+* 404 Not Found - requested resource does not exist
+* 500 Internal Server Error - unsuccessful request, a problem in application
+* 507 Insufficient Storage - indicates failure to increment a counter because of counter value overflow
+
+=== Errors
+All errors are returned in following format (assume that counter with name "one-name" already exists):
+
+operation::error-example[]
+
+== Create
+
+Create new counter.
+
+operation::create-example[]
+
+This operation allows skipping counter name in request.
+In this case UUID-based name will be automatically assigned.
+
+operation::create-without-name-example[]
+
+== Insert
+
+Create new counter with name specified in URL.
+
+operation::insert-example[]
+
+== Get
+
+Retrieve counter on specified URL.
+
+operation::get-example[]
+
+== Increment
+
+Increment value of counter residing on given URL.
+
+operation::increment-example[]
+
+== Delete
+
+Delete counter residing on given URL.
+
+operation::delete-example[]
+
+== Counters Sum
+
+Retrieve value sum of all counters present.
+
+operation::counters-sum-example[]
+
+== Counter Names
+
+Retrieve names list of all counters present.
+
+operation::counter-names-example[]

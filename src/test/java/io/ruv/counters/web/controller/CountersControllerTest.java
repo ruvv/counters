@@ -11,16 +11,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.cli.CliDocumentation;
+import org.springframework.restdocs.http.HttpDocumentation;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigInteger;
 import java.util.Collections;
@@ -28,6 +37,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,11 +45,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
+@ExtendWith(RestDocumentationExtension.class)
 public class CountersControllerTest {
 
     @MockBean
     private CountersService service;
-    @Autowired
+
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
@@ -95,6 +106,18 @@ public class CountersControllerTest {
         return objectMapper.writeValueAsBytes(o);
     }
 
+    @SuppressWarnings("JUnitMalformedDeclaration")
+    @BeforeEach
+    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
+
+        // attach spring-restdocs
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
+                        .snippets()
+                        .withDefaults(CliDocumentation.curlRequest(),
+                                HttpDocumentation.httpResponse())).build();
+    }
+
     @AfterEach
     public void reset() {
 
@@ -109,9 +132,10 @@ public class CountersControllerTest {
 
         //act
         mockMvc.perform(create().content(json(oneDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(oneName))
-                .andExpect(jsonPath("value").value(oneValue));
+                .andExpect(jsonPath("value").value(oneValue))
+                .andDo(document("create-example"));
     }
 
     @Test
@@ -125,9 +149,10 @@ public class CountersControllerTest {
 
         //act
         mockMvc.perform(create().content(json(unnamedDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(Matchers.not(Matchers.blankOrNullString())))
-                .andExpect(jsonPath("value").value(oneValue));
+                .andExpect(jsonPath("value").value(oneValue))
+                .andDo(document("create-without-name-example"));
     }
 
     @Test
@@ -139,7 +164,8 @@ public class CountersControllerTest {
         //act
         mockMvc.perform(create().content(json(oneDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("errors[0].message").value(containsString(oneName)));
+                .andExpect(jsonPath("errors[0].message").value(containsString(oneName)))
+                .andDo(document("error-example"));
     }
 
     @Test
@@ -187,9 +213,10 @@ public class CountersControllerTest {
 
         //act
         mockMvc.perform(insert(oneName).content(json(oneDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(oneName))
-                .andExpect(jsonPath("value").value(oneValue));
+                .andExpect(jsonPath("value").value(oneValue))
+                .andDo(document("insert-example"));
     }
 
     @Test
@@ -204,7 +231,7 @@ public class CountersControllerTest {
 
         //act
         mockMvc.perform(insert(oneName).content(json(anotherNameDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(oneName))
                 .andExpect(jsonPath("value").value(oneValue));
     }
@@ -269,7 +296,8 @@ public class CountersControllerTest {
         mockMvc.perform(increment(oneName))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(oneName))
-                .andExpect(jsonPath("value").value(oneValue));
+                .andExpect(jsonPath("value").value(oneValue))
+                .andDo(document("increment-example"));
     }
 
     @Test
@@ -306,7 +334,8 @@ public class CountersControllerTest {
         mockMvc.perform(get(oneName))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(oneName))
-                .andExpect(jsonPath("value").value(oneValue));
+                .andExpect(jsonPath("value").value(oneValue))
+                .andDo(document("get-example"));
     }
 
     @Test
@@ -331,7 +360,8 @@ public class CountersControllerTest {
         mockMvc.perform(delete(oneName))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(oneName))
-                .andExpect(jsonPath("value").value(oneValue));
+                .andExpect(jsonPath("value").value(oneValue))
+                .andDo(document("delete-example"));
     }
 
     @Test
@@ -355,7 +385,8 @@ public class CountersControllerTest {
         //act
         mockMvc.perform(sum())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("sum").value(BigInteger.valueOf(oneValue)));
+                .andExpect(jsonPath("sum").value(BigInteger.valueOf(oneValue)))
+                .andDo(document("counters-sum-example"));
     }
 
     @Test
@@ -395,7 +426,8 @@ public class CountersControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("names").isArray())
                 .andExpect(jsonPath("names").value(Matchers.hasSize(1)))
-                .andExpect(jsonPath("names").value(hasItem(oneName)));
+                .andExpect(jsonPath("names").value(hasItem(oneName)))
+                .andDo(document("counter-names-example"));
     }
 
     @Test
