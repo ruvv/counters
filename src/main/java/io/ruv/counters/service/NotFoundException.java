@@ -4,11 +4,16 @@ import io.ruv.counters.util.exception.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 
-public class NotFoundException extends RuntimeException implements ApiException {
+public class NotFoundException extends ApiException {
 
     public NotFoundException(String message) {
 
         super(message);
+    }
+
+    public static NotFoundException of(String name) {
+
+        return new NotFoundException(String.format("Counter with name '%s' does not exist.", name));
     }
 
     @NonNull

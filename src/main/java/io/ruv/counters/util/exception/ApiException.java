@@ -3,11 +3,25 @@ package io.ruv.counters.util.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 
-public interface ApiException {
+public abstract class ApiException extends RuntimeException {
+
+    public ApiException(String message) {
+
+        super(message);
+    }
+
+    public ApiException(String message, Throwable cause) {
+
+        super(message, cause);
+    }
 
     @NonNull
-    HttpStatus getHttpStatus();
+    public abstract HttpStatus getHttpStatus();
 
     @NonNull
-    String getMessage();
+    @Override
+    public String getMessage() {
+
+        return super.getMessage();
+    }
 }

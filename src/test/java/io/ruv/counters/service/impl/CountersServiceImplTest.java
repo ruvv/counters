@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -85,6 +86,23 @@ public class CountersServiceImplTest {
         //act
         Assertions.assertThatThrownBy(() -> service.create(dto))
                 .isInstanceOf(IllegalNameException.class);
+    }
+
+    @Test
+    public void createTooLongNameThrowsException() {
+
+        val maxSize = CountersServiceImpl.MAX_NAME_LENGTH;
+
+        val longName = String.join("", Collections.nCopies(maxSize + 1, "x"));
+
+        val dto = new CounterDto();
+        dto.setName(longName);
+
+
+        //act
+        Assertions.assertThatThrownBy(() -> service.create(dto))
+                .isInstanceOf(IllegalNameException.class)
+                .hasMessageContaining(longName);
     }
 
     @Test

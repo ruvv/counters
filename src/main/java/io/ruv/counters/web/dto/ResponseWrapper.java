@@ -11,6 +11,7 @@ import org.springframework.lang.Nullable;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,19 +22,19 @@ public class ResponseWrapper<T> {
      * Response timestamp
      */
     @NonNull
-    private ZonedDateTime timestamp = ZonedDateTime.now(Clock.systemUTC());
+    private ZonedDateTime timestamp;
 
     /**
      * Response http status
      */
     @NonNull
-    private HttpStatus httpStatus = HttpStatus.OK;
+    private HttpStatus httpStatus;
 
     /**
      * Optional error details
      */
     @Nullable
-    private ErrorDto error;
+    private List<ErrorDto> errors;
 
     /**
      * Optional response payload
@@ -50,11 +51,27 @@ public class ResponseWrapper<T> {
                 .setData(data);
     }
 
+    public static <T> ResponseWrapper<T> of(T data, HttpStatus httpStatus) {
+
+        return new ResponseWrapper<T>()
+                .setTimestamp(ZonedDateTime.now(Clock.systemUTC()))
+                .setHttpStatus(httpStatus)
+                .setData(data);
+    }
+
     public static ResponseWrapper<?> of(ApiException exception) {
 
         return new ResponseWrapper<Object>()
                 .setTimestamp(ZonedDateTime.now(Clock.systemUTC()))
                 .setHttpStatus(exception.getHttpStatus())
-                .setError(new ErrorDto(exception.getMessage()));
+                .setErrors(List.of(new ErrorDto(exception.getMessage())));
+    }
+
+    public static ResponseWrapper<?> unhandled(Exception exception) {
+
+        return new ResponseWrapper<Object>()
+                .setTimestamp(ZonedDateTime.now(Clock.systemUTC()))
+                .setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .setErrors(List.of(new ErrorDto(exception.getMessage())));
     }
 }

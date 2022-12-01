@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class CountersServiceImpl implements CountersService {
 
     private final CountersRepository repository;
+    public static final int MAX_NAME_LENGTH = 1024; //todo externalize
 
     /**
      * {@inheritDoc}
@@ -29,8 +30,7 @@ public class CountersServiceImpl implements CountersService {
 
         val result = repository.create(counter.getName(), counter.getValue());
         return result.map(this::toDto)
-                .orElseThrow(() -> new DuplicateNameException(
-                        String.format("Counter with name '%s' already exists.", counter.getName())));
+                .orElseThrow(() -> DuplicateNameException.of(counter.getName()));
     }
 
     /**
@@ -44,10 +44,10 @@ public class CountersServiceImpl implements CountersService {
 
             val result = repository.incrementByName(name);
 
-            return result.map(this::toDto).orElseThrow(() -> notFound(name));
+            return result.map(this::toDto).orElseThrow(() -> NotFoundException.of(name));
         } catch (ArithmeticException e) {
 
-            throw new OverflowException(String.format("Counter '%s' can not be incremented without overflowing.", name), e);
+            throw OverflowException.of(name, e);
         }
     }
 
@@ -60,7 +60,7 @@ public class CountersServiceImpl implements CountersService {
 
         val result = repository.findByName(name);
 
-        return result.map(this::toDto).orElseThrow(() -> notFound(name));
+        return result.map(this::toDto).orElseThrow(() -> NotFoundException.of(name));
     }
 
     /**
@@ -72,7 +72,7 @@ public class CountersServiceImpl implements CountersService {
 
         val result = repository.deleteByName(name);
 
-        return result.map(this::toDto).orElseThrow(() -> notFound(name));
+        return result.map(this::toDto).orElseThrow(() -> NotFoundException.of(name));
     }
 
     /**
@@ -106,12 +106,18 @@ public class CountersServiceImpl implements CountersService {
 
         if (dto.getName() == null) {
 
-            throw new IllegalNameException("Counter name was not specified.");
+            throw IllegalNameException.nullName();
         }
 
         if (dto.getName().isEmpty()) {
 
-            throw new IllegalNameException(String.format("Illegal counter name '%s'.", dto.getName()));
+            throw IllegalNameException.emptyName();
+        }
+
+        if (dto.getName().length() > MAX_NAME_LENGTH) {
+
+
+            throw IllegalNameException.tooLongName(dto.getName(), MAX_NAME_LENGTH);
         }
     }
 
@@ -122,10 +128,5 @@ public class CountersServiceImpl implements CountersService {
         dto.setValue(counter.getValue());
 
         return dto;
-    }
-
-    private NotFoundException notFound(String name) {
-
-        return new NotFoundException(String.format("Counter with name '%s' does not exist.", name));
     }
 }
